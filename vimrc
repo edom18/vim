@@ -1,5 +1,5 @@
 " vim:set ts=8 sts=2 sw=2 tw=0: (この行に関しては:help modelineを参照)
-"
+"test test
 " An example for a Japanese version vimrc file.
 " 日本語版のデフォルト設定ファイル(vimrc) - Vim7用試作
 "
