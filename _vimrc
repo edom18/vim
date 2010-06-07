@@ -246,7 +246,8 @@ call AmbsearchLoad("jyouyou")
 "enable function of jumping end tag.
 source $VIMRUNTIME/macros/matchit.vim
 
-
+"set statusline
+set statusline=%f%m%r%h%w[%n%{winnr('$')>1?':'.winnr().'/'.winnr('$'):''}]%=%{&fileencoding}(%{&fileformat})%6l/%L,%c%V%6P
 
 "test block.
 
