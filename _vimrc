@@ -1,34 +1,36 @@
 "map settings.
 nnoremap j gj
 nnoremap k gk
+nnoremap gj j
+nnoremap gk k
 nnoremap + $
 vnoremap + $
 nnoremap <tab> f=2l
 nnoremap <s-tab> 2F=2l
 
-vnoremap <tab> <C-p>
-vnoremap <s-tab> <C-n>
+"vnoremap <tab> <C-p>
+"vnoremap <s-tab> <C-n>
 
 nnoremap <space>a ggVG
 
 ":only
-nnoremap <unique> <silent> <Space>o :<C-u>on<CR>
+nnoremap <silent> <Space>o :<C-u>on<CR>
 "paste
-inoremap <unique> <silent> <C-p> <C-r>*
+inoremap <silent> <C-p> <C-r>x
 
 "move window
-nnoremap <unique> <silent> <Space>h <C-w>h
-nnoremap <unique> <silent> <Space>k <C-w>k
-nnoremap <unique> <silent> <Space>l <C-w>l
-nnoremap <unique> <silent> <Space>j <C-w>j
+nnoremap <silent> <Space>h <C-w>h
+nnoremap <silent> <Space>k <C-w>k
+nnoremap <silent> <Space>l <C-w>l
+nnoremap <silent> <Space>j <C-w>j
 
 "move tab
-nnoremap <unique> gh gT
-nnoremap <unique> gl gt
+nnoremap gh gT
+nnoremap gl gt
 
 "Search
-nnoremap <unique> n nzz
-nnoremap <unique> N Nzz
+nnoremap n nzz
+nnoremap N Nzz
 
 "window move
 nnoremap L Lzz
@@ -45,11 +47,11 @@ let $tmpdir = 'C:\tmp\vim'
 let $temp = 'C:\works\temp'
 
 "Fuf setting
-nnoremap <unique> <silent> <space>fb :FufBuffer!<CR>
-nnoremap <unique> <silent> <space>ff :FufFile! <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
-nnoremap <unique> <silent> <space>fd :FufDir! <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
-nnoremap <unique> <silent> <space>fm :FufMruFile<CR>
-nnoremap <unique> <silent> <Space>fc :FufRenewCache<CR>
+nnoremap <silent> <space>fb :FufBuffer!<CR>
+nnoremap <silent> <space>ff :FufFile! <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
+nnoremap <silent> <space>fd :FufDir! <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
+nnoremap <silent> <space>fm :FufMruFile<CR>
+nnoremap <silent> <Space>fc :FufRenewCache<CR>
 autocmd FileType fuf nmap <C-c> <ESC>
 let g:fuf_patternSeparator = ' '
 let g:fuf_modesDisable = ['mrucmd']
@@ -61,6 +63,9 @@ let g:fuf_file_exclude = '\v\.DS_Store|\.git|\.swp|\.svn'
 "set expand key for zen-coding
 let g:user_zen_expandabbr_key='<c-enter>'
 
+"supertab setting.
+let g:SuperTabMappingForward = "<s-tab>"
+let g:SuperTabMappingBackward = "<tab>"
 
 "set path for SVN
 let $PATH = 'C:\Program Files\Subversion\bin;' . $PATH
@@ -214,6 +219,8 @@ nnoremap <silent> yac $va{o^"xy
 nnoremap <silent> vic $vi{
 nnoremap <silent> dic $vi{"xd
 nnoremap <silent> yic $vi{"xy
+
+nnoremap <silent> vaac $va{o?}<CR>l
 
 
 "jump to middle position on column.
