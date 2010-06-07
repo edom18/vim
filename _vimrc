@@ -37,6 +37,8 @@ nnoremap L Lzz
 nnoremap <C-L> L
 nnoremap H Hzz
 nnoremap <C-H> H
+nnoremap zk zb
+nnoremap zj zt
 
 "defined default directory.
 let $dt = 'C:\Documents and Settings\hiruma-kazuya\デスクトップ\'
@@ -76,6 +78,7 @@ set runtimepath+=$VIM/runtime/after
 "数値実態参照の変換
 vmap <silent> sn :Str2NumChar<CR> 
 vmap <silent> sh :Str2HexLiteral<CR> 
+
 
 "nnoremap y "xy
 "vnoremap y "xy
