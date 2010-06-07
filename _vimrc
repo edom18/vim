@@ -77,40 +77,26 @@ set runtimepath+=$VIM/runtime/after
 vmap <silent> sn :Str2NumChar<CR> 
 vmap <silent> sh :Str2HexLiteral<CR> 
 
-
-command! Mye :30vnew .
-
-nnoremap y "xy
-vnoremap y "xy
-nnoremap d "xd
-vnoremap d "xd
-nnoremap c "xc
-vnoremap c "xc
-nnoremap p "xp
+"nnoremap y "xy
+"vnoremap y "xy
+"nnoremap d "xd
+"vnoremap d "xd
+"nnoremap c "xc
+"vnoremap c "xc
+"nnoremap p "xp
 "nnoremap P "xP
-vnoremap p "xp
-nnoremap x "xx
-vnoremap x "xx
-nnoremap <Space>y "*y
-vnoremap <Space>y "*y
-nnoremap <Space>P "*P
-nnoremap <Space>p "*p
+"vnoremap p "xp
+"nnoremap x "xx
+"vnoremap x "xx
+"nnoremap <Space>y "*y
+"vnoremap <Space>y "*y
+"nnoremap <Space>P "*P
+"nnoremap <Space>p "*p
+nnoremap <Space>y "xy
+vnoremap <Space>y "xy
+nnoremap <Space>P "xP
+nnoremap <Space>p "xp
 
-
-"nnoremap <C-p> :<C-u>set opfunc=OverridePaste<CR>g@
-"nnoremap <C-p><C-p> :<C-u>set opfunc=OverridePaste<CR>g@g@
-"
-"function! OverridePaste(type, ...)
-"    if a:0
-"        silent execute "normal! `<" . a:type . "`>\"xp"
-"    elseif a:type == 'line'
-"        silent execute "normal! '[V']\"xp"
-"    elseif a:type == 'block'
-"        silent execute "normal! `[\<C-V>`]\"xp"
-"    else
-"        silent execute "normal! `[v`]\"xp"
-"    endif
-"endfunction
 
 "insert comment to end tag
 function! Endtagcomment()
@@ -207,18 +193,22 @@ nnoremap <silent> <Space>t :<C-u>call JumpTag()<CR>
 "input br tag.
 imap <s-enter> <br /><CR>
 
-
 "expand visual mode function.
 nnoremap <silent> vi_ T_vt_
 nnoremap <silent> ci_ T_vt_c
 nnoremap <silent> di_ T_vt_d
-nnoremap <silent> yi_ T_vt_"xy
+"nnoremap <silent> yi_ T_vt_"xy
+nnoremap <silent> yi_ T_vt_y
 nnoremap <silent> vac $va{o^
-nnoremap <silent> dac $va{o^"xd
-nnoremap <silent> yac $va{o^"xy
+"nnoremap <silent> dac $va{o^"xd
+"nnoremap <silent> yac $va{o^"xy
+nnoremap <silent> dac $va{o^d
+nnoremap <silent> yac $va{o^y
 nnoremap <silent> vic $vi{
-nnoremap <silent> dic $vi{"xd
-nnoremap <silent> yic $vi{"xy
+"nnoremap <silent> dic $vi{"xd
+"nnoremap <silent> yic $vi{"xy
+nnoremap <silent> dic $vi{d
+nnoremap <silent> yic $vi{y
 
 nnoremap <silent> vaac $va{o?}<CR>l
 
@@ -250,5 +240,4 @@ source $VIMRUNTIME/macros/matchit.vim
 set statusline=%f%m%r%h%w[%n%{winnr('$')>1?':'.winnr().'/'.winnr('$'):''}]%=%{&fileencoding}(%{&fileformat})%6l/%L,%c%V%6P
 
 "test block.
-
 
