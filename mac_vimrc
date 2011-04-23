@@ -1,0 +1,315 @@
+"map settings.
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+nnoremap <tab> f=2l
+nnoremap <s-tab> 2F=2l
+nnoremap <D-i> <ESC>
+inoremap <D-i> <ESC>
+vnoremap <D-i> <ESC>
+cnoremap <D-i> <ESC>
+onoremap <D-i> <ESC>
+inoremap <D-o> <C-o>
+
+nnoremap <space>a ggVG
+
+":only
+nnoremap <silent> <Space>o :<C-u>on<CR>
+
+"line merge
+nnoremap <silent> <Space><Space>j JxJx
+
+"paste
+inoremap <silent> <C-p> <C-r>x
+
+"move window
+nnoremap <silent> <Space>h <C-w>h
+nnoremap <silent> <Space>k <C-w>k
+nnoremap <silent> <Space>l <C-w>l
+nnoremap <silent> <Space>j <C-w>j
+
+"expand window
+nnoremap <silent> <Space><Space><Space>j <C-w>+
+nnoremap <silent> <Space><Space>k <C-w>-
+nnoremap <silent> <Space><Space>h <C-w><
+nnoremap <silent> <Space><Space>l <C-w>>
+
+"quit window
+nnoremap <silent> <Space>d :q<CR>
+
+"move tab
+nnoremap gh gT
+nnoremap gl gt
+
+"Search
+nnoremap n nzz
+nnoremap N Nzz
+
+"window move
+nnoremap L Lzz
+vnoremap L Lzz
+nnoremap <C-L> L
+vnoremap <C-L> L
+nnoremap H Hzz
+vnoremap H Hzz
+nnoremap <C-H> H
+vnoremap <C-H> H
+nnoremap zk zb
+nnoremap zj zt
+
+nnoremap <silent> \\ :<C-u>noh<CR>
+
+"Fuf setting
+nnoremap <silent> <space>fb :FufBuffer!<CR>
+nnoremap <silent> <space>ff :FufFile! <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
+nnoremap <silent> <space>fd :FufDir! <C-r>=expand('%:p:~')[:-1-len(expand('%:p:~:t'))]<CR><CR>
+nnoremap <silent> <space>fm :FufMruFile<CR>
+nnoremap <silent> <Space>fc :FufRenewCache<CR>
+autocmd FileType fuf nmap <C-c> <ESC>
+let g:fuf_patternSeparator = ' '
+let g:fuf_modesDisable = ['mrucmd']
+let g:fuf_mrufile_exclude = '\v\.DS_Store|\.git|\.swp|\.svn'
+let g:fuf_mrufile_maxItem = 100
+let g:fuf_enumeratingLimit = 20
+let g:fuf_file_exclude = '\v\.DS_Store|\.git|\.swp|\.svn'
+
+"set expand key for zen-coding
+let g:user_zen_expandabbr_key='<c-enter>'
+
+"NeoComplete
+let g:neocomplcache_enable_at_startup = 1
+"let g:NeoComplCache_EnableAtStartup = 1
+"let g:NeoComplCache_KeywordCompletionStartLength = 1
+"let g:NeoComplCache_MinKeywordLength = 3
+"let g:NeoComplCache_MinSyntaxLength = 3
+"let g:NeoComplCache_SmartCase = 1
+
+"runtimepath setting
+set runtimepath+=$VIM/runtime/after
+
+"数値実態参照の変換
+vmap <silent> sn :Str2NumChar<CR> 
+vmap <silent> sh :Str2HexLiteral<CR> 
+
+
+nnoremap <Space>y "xy
+vnoremap <Space>y "xy
+nnoremap <Space>P "xP
+nnoremap <Space>p "xp
+vnoremap <Space>P "xP
+vnoremap <Space>p "xp
+nnoremap <silent> <Space>r :let @x = @@<CR>
+
+"insert comment to end tag
+function! Endtagcomment()
+    let reg_save = @@
+
+    try
+        silent normal vaty
+    catch
+        execute "normal \<Esc>"
+        echohl ErrorMsg
+        echo 'no match html tags'
+        echohl None
+        return
+    endtry
+
+    let html = @@
+
+    let start_tag = matchstr(html, '\v(\<.{-}\>)')
+    let tag_name  = matchstr(start_tag, '\v([a-zA-Z]+)')
+
+    let id = ''
+    let id_match = matchlist(start_tag, '\vid\=["'']([^"'']+)["'']')
+    if exists('id_match[1]')
+        let id = '#' . id_match[1]
+    endif
+
+    let class = ''
+    let class_match = matchlist(start_tag, '\vclass\=["'']([^"'']+)["'']')
+    if exists('class_match[1]')
+        let class = '.' . join(split(class_match[1], '\v\s+'), '.')
+    endif
+
+    execute "normal `]va<\<Esc>`<"
+
+    let comment = g:endtagcommentFormat
+    let comment = substitute(comment, '%id', id, 'g')
+    let comment = substitute(comment, '%class', class, 'g')
+    let @@ = comment
+
+    normal ""P
+
+    let @@ = reg_save
+endfunction
+
+let g:endtagcommentFormat = '<!-- /%id%class -->'
+nnoremap ,t :<C-u>call Endtagcomment()<CR>
+
+
+"toggle comment to CSS
+function! LineCommentCSS()
+    let reg_save = @@
+
+    silent normal ^v$hy
+    let css = @@
+    let chk = matchstr(css, '\v^/\*')
+    if chk == '/*'
+        let comment = matchlist(css, '\v/\*(.*)\*/')
+        let @@ = comment[1]
+        silent normal ^""PlD
+    else
+        let css = '/*' . css . '*/'
+        let @@ = css
+        normal ""PlD
+    endif
+
+    let @@ = reg_save
+endfunction
+
+nnoremap ,c :<C-u>call LineCommentCSS()<CR>
+
+"jump to end tag.
+function! JumpTag()
+    let save_reg = @@
+    normal yy
+
+    let chk = @@
+    let chk = matchstr(chk, '\v(\</.*\>)')
+    execute "normal ^vat\<ESC>"
+
+    if chk != ''
+        normal `<
+    else
+        normal `>
+    endif
+
+    let @@ = save_reg
+    let @* = save_reg
+endfunction
+
+nnoremap <silent> <Space>t :<C-u>call JumpTag()<CR>
+
+
+"input br tag.
+imap <s-enter> <br /><CR>
+imap { {}<LEFT>
+"imap [ []<LEFT>
+"imap ( ()<LEFT>
+
+"expand visual mode function.
+nnoremap <silent> vi_ T_vt_
+nnoremap <silent> ci_ T_vt_c
+nnoremap <silent> di_ T_vt_d
+nnoremap <silent> da_ F_vf_d
+"nnoremap <silent> yi_ T_vt_"xy
+nnoremap <silent> yi_ T_vt_y
+nnoremap <silent> vac $va{o^
+"nnoremap <silent> dac $va{o^"xd
+"nnoremap <silent> yac $va{o^"xy
+nnoremap <silent> dac $va{o^d
+nnoremap <silent> yac $va{o^y
+nnoremap <silent> vic $vi{
+"nnoremap <silent> dic $vi{"xd
+"nnoremap <silent> yic $vi{"xy
+nnoremap <silent> dic $vi{d
+nnoremap <silent> yic $vi{y
+
+nnoremap <silent> vaac $va{o?}<CR>l
+
+
+"jump to middle position on column.
+function! JumpCenter()
+    normal $
+    let end = col(".")
+    let colm = &columns
+    if colm < end
+        let end = colm
+    endif
+    let to = end / 2
+    call cursor(0,to)
+endfunction
+
+nnoremap <silent> <space>m :<C-u>call JumpCenter()<CR>
+
+
+"set to load file.
+"source $VIM/vimfiles/macros/ambsearch-20040211/ambsearch.vim
+"call AmbsearchLoad("katakana")
+"call AmbsearchLoad("jyouyou")
+
+"enable function of jumping end tag.
+source $VIMRUNTIME/macros/matchit.vim
+
+"set statusline
+set statusline=%f%m%r%h%w[%n%{winnr('$')>1?':'.winnr().'/'.winnr('$'):''}]%=%{&fileencoding}(%{&fileformat})%6l/%L,%c%V%6P
+
+"SVN move
+command! Svn :cd %:h
+
+"sass run
+function! SassRun()
+    cd %:h
+    !start cmd
+endfunction
+command! -nargs=0 Sass :call SassRun()
+
+au BufRead,BufNewFile *.scss set filetype=scss
+
+"split tags.
+nnoremap ,b execute(':<C-u>s;\(<.\{-}>\)\(.*\)\(</.*>\);\1\2\3;<CR>')
+
+"setting for environment.
+set nobackup
+set nu
+
+"IME setting
+set iminsert=0
+set imsearch=-1
+
+
+"カーソル行のハイライト
+set cursorline
+
+"カレントウィンドウのみに下線を引く
+augroup cch
+	autocmd! cch
+	autocmd WinLeave * set nocursorline
+	autocmd WinEnter , BufRead * set cursorline
+augroup END
+
+:hi clear CursorLine
+:hi CursorLine gui=underline
+highlight CursorLine ctermbg=black guibg=black
+
+"tab settings.
+set cindent
+set expandtab
+set tabstop=2
+set shiftwidth=2
+
+"clipboard
+"set clipboard=unnamed
+
+"pathogen.vim setting.
+"if !has('gui_macvim')
+  call pathogen#runtime_append_all_bundles()
+"endif
+
+"vimshell setting
+let g:VimShell_EnableInteractive = 1
+
+let g:sass_started_dirs = []
+function! Sass_start()
+	let current_dir = expand('%:p:h')
+	if match(g:sass_started_dirs, '^'.current_dir.'$') == -1
+		call add(g:sass_started_dirs, current_dir)
+		call system('sass --watch ' . current_dir . ' &')
+	endif
+endfunction
+
+au! BufRead *.scss call Sass_start()
+
+"ignore case off when type the UpperCase on search
+set smartcase
