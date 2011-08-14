@@ -35,8 +35,17 @@ nnoremap <silent> <Space><Space>k <C-w>-
 nnoremap <silent> <Space><Space>h <C-w><
 nnoremap <silent> <Space><Space>l <C-w>>
 
+"save page
+nnoremap <silent> <Space>s :w<CR>
+
 "quit window
 nnoremap <silent> <Space>d :q<CR>
+
+"new tab
+nnoremap <silent> \t :<C-u>tabnew<CR>
+
+"open to browser
+nnoremap <silent> <leader>w :silent ! open %<CR>
 
 "move tab
 nnoremap gh gT
@@ -60,6 +69,12 @@ nnoremap zj zt
 
 nnoremap <silent> \\ :<C-u>noh<CR>
 
+"expand * command for visual mode.
+vnoremap <silent> * "vy/\V<C-r>=substitute(escape(@v,'\/'),"\n",'\\n','g')<CR><CR>
+
+"NEADTree settings
+nnoremap <silent> <space>ft :NERDTreeFind<CR>
+
 "Fuf setting
 nnoremap <silent> <space>fb :FufBuffer!<CR>
 nnoremap <silent> <space>ff :FufFile! <C-r>=expand('%:~:.')[:-1-len(expand('%:~:.:t'))]<CR><CR>
@@ -75,18 +90,53 @@ let g:fuf_enumeratingLimit = 20
 let g:fuf_file_exclude = '\v\.DS_Store|\.git|\.swp|\.svn'
 
 "set expand key for zen-coding
-let g:user_zen_expandabbr_key='<c-enter>'
+"let g:user_zen_expandabbr_key='<c-enter>'
+let g:user_zen_expandabbr_key='<d-enter>'
 
 "NeoComplete
-let g:neocomplcache_enable_at_startup = 1
+"let g:neocomplcache_enable_at_startup = 1
 "let g:NeoComplCache_EnableAtStartup = 1
 "let g:NeoComplCache_KeywordCompletionStartLength = 1
 "let g:NeoComplCache_MinKeywordLength = 3
 "let g:NeoComplCache_MinSyntaxLength = 3
 "let g:NeoComplCache_SmartCase = 1
 
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_max_list = 30
+let g:neocomplcache_auto_completion_start_length = 2
+let g:neocomplcache_enable_smart_case = 1
+"" like AutoComplPop
+let g:neocomplcache_enable_auto_select = 1
+"" search with camel case like Eclipse
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+"imap <C-k> <Plug>(neocomplcache_snippets_expand)
+"smap <C-k> <Plug>(neocomplcache_snippets_expand)
+inoremap <expr><C-g> neocomplcache#undo_completion()
+inoremap <expr><C-l> neocomplcache#complete_common_string()
+"" SuperTab like snippets behavior.
+"imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+imap <C-k> <Plug>(neocomplcache_snippets_expand)
+smap <C-k> <Plug>(neocomplcache_snippets_expand)
+
+"" <CR>: close popup and save indent.
+"inoremap <expr><CR> neocomplcache#smart_close_popup() . (&indentexpr != '' ? "\<C-f>\<CR>X\<BS>":"\<CR>")
+inoremap <expr><CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+"" <TAB>: completion.
+inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+"" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup() . "\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup() . "\<C-h>"
+inoremap <expr><C-y> neocomplcache#close_popup()
+inoremap <expr><C-e> neocomplcache#cancel_popup()
+
+
+
+
 "runtimepath setting
 set runtimepath+=$VIM/runtime/after
+set runtimepath+=$HOME/.vim/runtime/
 
 "数値実態参照の変換
 vmap <silent> sn :Str2NumChar<CR> 
@@ -167,8 +217,25 @@ function! LineCommentCSS()
 
     let @@ = reg_save
 endfunction
-
 nnoremap ,c :<C-u>call LineCommentCSS()<CR>
+
+function! CSS3PropertyDuplicate()
+  let reg_save = @@
+
+  silent normal Y
+  let css3 = @@
+  let ind = matchlist(css3, '\v(\s*)(.*)')
+  let webkit = ind[1] . "-webkit-" . ind[2]
+  let moz    = ind[1] . "-moz-"    . ind[2]
+  let ms     = ind[1] . "-ms-"     . ind[2]
+  let o      = ind[1] . "-o-"      . ind[2]
+
+  let @@ = webkit . moz . ms . o
+  normal ""P
+
+  let @@ = reg_save
+endfunction
+nnoremap ,3 :<C-u>call CSS3PropertyDuplicate()<CR>
 
 "jump to end tag.
 function! JumpTag()
@@ -189,11 +256,13 @@ function! JumpTag()
     let @* = save_reg
 endfunction
 
-nnoremap <silent> <Space>t :<C-u>call JumpTag()<CR>
+"nnoremap <silent> <Space>t :<C-u>call JumpTag()<CR>
+"nnoremap <silent> <Space>t :normal %<CR>
 
 
 "input br tag.
-imap <s-enter> <br /><CR>
+imap <s-enter> <br />
+nnoremap <s-enter> :normal $a<br />
 imap { {}<LEFT>
 "imap [ []<LEFT>
 "imap ( ()<LEFT>
@@ -286,7 +355,7 @@ highlight CursorLine ctermbg=black guibg=black
 "tab settings.
 set cindent
 set expandtab
-set tabstop=2
+set tabstop=4
 set shiftwidth=2
 
 "clipboard
@@ -313,3 +382,42 @@ au! BufRead *.scss call Sass_start()
 
 "ignore case off when type the UpperCase on search
 set smartcase
+
+"tags file include.
+set tags=./tags,/usr/src/tags
+
+let g:outputz_secret_key = 'OFloI5J-_Xhn'
+let g:outputz_uri = 'http://outputz.com/api/post'
+
+set nosmartindent
+
+
+"Google翻訳
+function! Google_translate(trn) range
+    setlocal previewheight=6
+    let tmp = @@
+    silent normal gvy
+    let tx = @@
+    let tx = substitute(tx, "\n", ' ',  'g')
+    let tx = substitute(tx, '"',  '""', 'g')
+    let tx = substitute(tx, "'",  "''", 'g')
+    let dst = "GoogleTranslateOutput"
+    " preview
+    silent execute ":pedit! " . dst
+    wincmd P
+    setlocal buftype=nofile
+    setlocal noswapfile
+    setlocal syntax=none
+    setlocal bufhidden=delete
+    setlocal wrap
+    setlocal modifiable
+    " perl one liner
+    silent execute ':%! perl -MWebService::Simple -e ''exit if @ARGV==0;my $t = WebService::Simple->new(base_url => "http://ajax.googleapis.com/ajax/services/language/translate",response_parser=>"JSON",params=>{v=>"1.0",langpair=>"'.a:trn.'",});my $r=$t->get({q=>$ARGV[0],}); print $r->parse_response->{responseData}->{translatedText};'' ''' . tx . ''' 2>&1 '
+    wincmd P
+endfunction
+vnoremap <silent> <Leader>te :call Google_translate("en\|ja")<CR>
+vnoremap <silent> <Leader>tj :call Google_translate("ja\|en")<CR>
+
+"undisplaied toolbar.
+set guioptions-=T
+
